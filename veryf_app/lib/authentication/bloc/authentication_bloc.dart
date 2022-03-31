@@ -10,6 +10,12 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
+  final AuthenticationRepository _authenticationRepository;
+  final UserRepository _userRepository;
+
+  late StreamSubscription<AuthenticationSession>
+      _authenticationStatusSubscription;
+
   AuthenticationBloc({
     required AuthenticationRepository authenticationRepository,
     required UserRepository userRepository,
@@ -18,15 +24,16 @@ class AuthenticationBloc
         super(const AuthenticationState.unknown()) {
     on<AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
-    _authenticationStatusSubscription = _authenticationRepository.status.listen(
-      (status) => add(AuthenticationStatusChanged(status)),
+    _authenticationStatusSubscription =
+        _authenticationRepository.session.listen(
+      (session) {
+        //TODO: User Class from authrepo & userrepo conflict
+        final User formatedUser =
+            User(session.user.id, session.user.username, session.user.email);
+        add(AuthenticationStatusChanged(session.status, formatedUser));
+      },
     );
   }
-
-  final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
-  late StreamSubscription<AuthenticationStatus>
-      _authenticationStatusSubscription;
 
   @override
   Future<void> close() {
@@ -42,11 +49,16 @@ class AuthenticationBloc
     switch (event.status) {
       case AuthenticationStatus.unauthenticated:
         return emit(const AuthenticationState.unauthenticated());
+
       case AuthenticationStatus.authenticated:
-        final user = await _tryGetUser();
+        final user = await _tryGetUser(
+          username: event.user.username,
+          email: event.user.email,
+        );
         return emit(user != null
             ? AuthenticationState.authenticated(user)
             : const AuthenticationState.unauthenticated());
+
       default:
         return emit(const AuthenticationState.unknown());
     }
@@ -59,9 +71,11 @@ class AuthenticationBloc
     _authenticationRepository.logOut();
   }
 
-  Future<User?> _tryGetUser() async {
+  Future<User?> _tryGetUser(
+      {required String email, required String username}) async {
     try {
-      final user = await _userRepository.getUser();
+      final user =
+          await _userRepository.getUser(email: email, username: username);
       return user;
     } catch (_) {
       return null;
