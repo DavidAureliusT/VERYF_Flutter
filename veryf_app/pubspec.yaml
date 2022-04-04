@@ -10,18 +10,19 @@ environment:
   sdk: ">=2.16.1 <3.0.0"
 
 dependencies:
+  authentication_repository:
+    path: packages/authentication_repository
   cupertino_icons: ^1.0.2
   equatable: ^2.0.3
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
   formz: ^0.4.1
-  authentication_repository:
-    path: packages/authentication_repository
-  user_repository:
-    path: packages/user_repository
+  google_fonts: ^2.3.1
   user_dataprovider:
     path: packages/user_dataprovider
+  user_repository:
+    path: packages/user_repository
 
 dev_dependencies:
   flutter_lints: ^1.0.0
