@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "veryf_app/packages/report_dataprovider"
+		},
+		{
+			"path": "veryf_app/packages/veryf_detection_api"
+		},
+		{
+			"path": "veryf_app/packages/report_repository"
+		}
+	],
+	"settings": {}
+}
