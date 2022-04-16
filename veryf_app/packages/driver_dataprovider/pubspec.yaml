@@ -1,0 +1,10 @@
+name: driver_dataprovider
+description: A package as driver data provider
+publish_to: none
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+
+dependencies:
+  gsheet_service:
+    path: ../gsheet_service

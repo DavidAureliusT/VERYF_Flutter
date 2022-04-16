@@ -1,0 +1,12 @@
+name: gsheet_service
+description: VERYF Package for retrive data from GSheet
+publish_to: none
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  gsheets: ^0.4.2
+  

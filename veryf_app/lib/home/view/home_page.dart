@@ -12,13 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late int _selectedPage;
-  late PageController _pageController;
+  late int _selectedPage; //? untuk navigasi antar page
+  late PageController _pageController; //? controller untuk page slider
   final List<LaporanCardWidget> _listLaporanHariIni = List.generate(7, (index) {
     return LaporanCardWidget(
         image: Image.asset('assets/images/sample.jpg'),
         invoice_number: "#123456");
-  });
+  }); //? Builder LaporanCard base on reports
 
   void _changePage(int pageNumber) {
     setState(() {

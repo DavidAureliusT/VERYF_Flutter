@@ -23,6 +23,8 @@ dependencies:
     path: packages/user_dataprovider
   user_repository:
     path: packages/user_repository
+  report_repository:
+    path: packages/report_repository
 
 dev_dependencies:
   flutter_lints: ^1.0.0

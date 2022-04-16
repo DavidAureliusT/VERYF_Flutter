@@ -19,6 +19,9 @@ class Driver extends Equatable {
         password: json['PASSWORD'],
       );
 
+  static const empty =
+      Driver(id: "-", driverName: "-", email: "-", password: "-");
+
   @override
   List<Object?> get props => [id, driverName, email, password];
 }

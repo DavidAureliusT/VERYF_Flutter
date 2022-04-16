@@ -27,7 +27,6 @@ class AuthenticationBloc
     _authenticationStatusSubscription =
         _authenticationRepository.session.listen(
       (session) {
-        //TODO: User Class from authrepo & userrepo conflict
         final User formatedUser =
             User(session.user.id, session.user.username, session.user.email);
         add(AuthenticationStatusChanged(session.status, formatedUser));
