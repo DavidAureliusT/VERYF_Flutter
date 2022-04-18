@@ -1,19 +1,14 @@
 part of 'home_bloc.dart';
 
 class HomeState extends Equatable {
-  final List? reports;
-  final int selectedPage;
-  final PageController pageController = PageController();
+  final List<Report> reports;
 
-  HomeState._({this.reports, required this.selectedPage});
+  HomeState({required this.reports});
 
-  HomeState.unloaded() : this._(reports: [], selectedPage: 0);
-
-  HomeState.loaded(List reports) : this._(reports: reports, selectedPage: 0);
-
-  HomeState.filtered(List reports, int selectedPage)
-      : this._(reports: reports, selectedPage: selectedPage);
+  HomeState copyWith({required List<Report> reports}) {
+    return HomeState(reports: reports);
+  }
 
   @override
-  List<Object> get props => [selectedPage, pageController];
+  List<Object> get props => [reports];
 }

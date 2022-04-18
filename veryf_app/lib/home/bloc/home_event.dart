@@ -7,10 +7,11 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class HariIniButtonTapped extends HomeEvent {
-  const HariIniButtonTapped();
+class RequestReports extends HomeEvent {
+  const RequestReports();
 }
 
-class BulanIniButtonTapped extends HomeEvent {
-  const BulanIniButtonTapped();
+class ReportsRetrived extends HomeEvent {
+  final List<Report> reports;
+  const ReportsRetrived(this.reports);
 }

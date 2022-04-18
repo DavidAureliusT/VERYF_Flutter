@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:user_repository/user_repository.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -11,25 +10,20 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
 
   late StreamSubscription<AuthenticationSession>
       _authenticationStatusSubscription;
 
   AuthenticationBloc({
     required AuthenticationRepository authenticationRepository,
-    required UserRepository userRepository,
   })  : _authenticationRepository = authenticationRepository,
-        _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
     on<AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
     _authenticationStatusSubscription =
         _authenticationRepository.session.listen(
       (session) {
-        final User formatedUser =
-            User(session.user.id, session.user.username, session.user.email);
-        add(AuthenticationStatusChanged(session.status, formatedUser));
+        add(AuthenticationStatusChanged(session.status, session.driver));
       },
     );
   }
@@ -50,12 +44,12 @@ class AuthenticationBloc
         return emit(const AuthenticationState.unauthenticated());
 
       case AuthenticationStatus.authenticated:
-        final user = await _tryGetUser(
-          username: event.user.username,
-          email: event.user.email,
+        final driver = await _tryGetDriver(
+          email: event.driver.email,
+          password: event.driver.password,
         );
-        return emit(user != null
-            ? AuthenticationState.authenticated(user)
+        return emit(driver != null
+            ? AuthenticationState.authenticated(driver)
             : const AuthenticationState.unauthenticated());
 
       default:
@@ -70,12 +64,12 @@ class AuthenticationBloc
     _authenticationRepository.logOut();
   }
 
-  Future<User?> _tryGetUser(
-      {required String email, required String username}) async {
+  Future<Driver?> _tryGetDriver(
+      {required String email, required String password}) async {
     try {
-      final user =
-          await _userRepository.getUser(email: email, username: username);
-      return user;
+      final driver = await _authenticationRepository.getCurrentDriver(
+          email: email, password: password);
+      return driver;
     } catch (_) {
       return null;
     }

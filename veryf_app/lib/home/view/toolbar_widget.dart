@@ -14,21 +14,25 @@ class ToolBarWidget extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(vertical: 18.0),
           child: Row(
             children: <Widget>[
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.menu),
-              ),
+              // IconButton(
+              //   onPressed: () {},
+              //   icon: const Icon(Icons.menu),
+              // ),
               const Spacer(),
-              MaterialButton(
-                elevation: 0,
+              TextButton(
                 onPressed: () {},
-                color: primaryColor,
-                shape: const CircleBorder(),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text("DA", style: subtitle1_dark),
-                ),
-              )
+                child: Text("Logout"),
+              ),
+              // MaterialButton(
+              //   elevation: 0,
+              //   onPressed: () {},
+              //   color: primaryColor,
+              //   shape: const CircleBorder(),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(10.0),
+              //     child: Text("DA", style: subtitle1_dark),
+              //   ),
+              // )
             ],
           ),
         ),

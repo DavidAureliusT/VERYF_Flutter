@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:invoice_dataprovider/invoice_dataprovider.dart';
 import 'package:latlng/latlng.dart';
 import 'package:report_repository/src/models/invoice.dart';
@@ -9,7 +11,22 @@ class ReportRepository {
 
   final InvoiceDataProvider _invoiceDataProvider = InvoiceDataProvider();
 
-  Future<List<Invoice>?> getInvoices({required String driverName}) async {
+  final _invoicesStreamController = StreamController<List<Invoice>>();
+  final _reportsStreamController = StreamController<List<Report>>();
+
+  Stream<List<Invoice>> get invoices async* {
+    await Future.delayed(const Duration(seconds: 1));
+    yield _invoices;
+    yield* _invoicesStreamController.stream;
+  }
+
+  Stream<List<Report>> get reports async* {
+    await Future.delayed(const Duration(seconds: 1));
+    yield _reports;
+    yield* _reportsStreamController.stream;
+  }
+
+  Future<void> getInvoices({required String driverName}) async {
     if (_invoices.length == 0) {
       final invoices = await _invoiceDataProvider.getAllInvoice()?.then(
           (invoices) => invoices
@@ -18,10 +35,10 @@ class ReportRepository {
               .toList());
       _invoices = invoices!;
     }
-    return _invoices;
+    _invoicesStreamController.add(_invoices);
   }
 
-  Future<List<Report>?> getReports({required String driverName}) async {
+  Future<void> getReports({required String driverName}) async {
     if (_reports.length == 0) {
       if (_invoices.length == 0) {
         getInvoices(driverName: driverName);
@@ -48,10 +65,16 @@ class ReportRepository {
                 invoice.amount,
                 invoice.payment_method);
             _reports.add(report);
+            print("${report.nomor_nota} - ${report.creator} is added");
           }
         }
       });
     }
-    return _reports;
+    _reportsStreamController.add(_reports);
+  }
+
+  void dispose() {
+    _reportsStreamController.close();
+    _invoicesStreamController.close();
   }
 }

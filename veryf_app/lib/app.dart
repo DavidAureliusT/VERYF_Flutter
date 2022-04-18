@@ -1,21 +1,20 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:report_repository/report_repository.dart';
 import 'package:veryf_app/authentication/authentication.dart';
 import 'package:veryf_app/home/home.dart';
+// import 'package:veryf_app/home/view/home_view.dart';
 import 'package:veryf_app/login/login.dart';
 import 'package:veryf_app/splash/splash.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
   const App({
     Key? key,
     required this.authenticationRepository,
-    required this.userRepository,
   }) : super(key: key);
 
   final AuthenticationRepository authenticationRepository;
-  final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,6 @@ class App extends StatelessWidget {
       child: BlocProvider(
         create: (_) => AuthenticationBloc(
           authenticationRepository: authenticationRepository,
-          userRepository: userRepository,
         ),
         child: AppView(),
       ),
@@ -52,7 +50,7 @@ class _AppViewState extends State<AppView> {
             switch (state.status) {
               case AuthenticationStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
-                  HomePage.route(),
+                  HomePage.route(reportRepository: ReportRepository()),
                   (route) => false,
                 );
                 break;
