@@ -10,6 +10,9 @@ environment:
   sdk: ">=2.16.1 <3.0.0"
 
 dependencies:
+  authentication_repository:
+    path: packages/authentication_repository
+  camera: ^0.9.4+19
   cupertino_icons: ^1.0.2
   equatable: ^2.0.3
   flutter:
@@ -17,10 +20,15 @@ dependencies:
   flutter_bloc: ^8.0.1
   formz: ^0.4.1
   google_fonts: ^2.3.1
+  image: ^3.1.3
+  latlng: ^0.1.0
+  location: ^4.3.0
+  path_provider: ^2.0.9
+  permission_handler: ^9.2.0
+  report_builder_repository:
+    path: packages/report_builder_repository
   report_repository:
     path: packages/report_repository
-  authentication_repository:
-    path: packages/authentication_repository
 
 dev_dependencies:
   flutter_lints: ^1.0.0
@@ -30,6 +38,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/date_icon.png
+    - assets/images/time_icon.png
+    - assets/images/location_icon.png
     - assets/images/sample.jpg
     - assets/images/GuidingCamera.png
     - assets/images/CaptureImageButton.png

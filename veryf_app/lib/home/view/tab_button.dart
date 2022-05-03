@@ -28,7 +28,7 @@ class TabButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(5.0),
         ),
         padding: const EdgeInsets.symmetric(
-          vertical: 7.0,
+          vertical: 3.0,
           horizontal: 9.0,
         ),
         child: Text(

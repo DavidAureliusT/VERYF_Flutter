@@ -1,10 +1,11 @@
-// import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:latlng/latlng.dart';
 import 'package:report_repository/report_repository.dart';
 import 'package:veryf_app/authentication/authentication.dart';
 import 'package:veryf_app/home/bloc/home_bloc.dart';
 import 'package:veryf_app/home/view/views.dart';
+import 'package:veryf_app/report_builder/views/report_builder_navigator.dart';
 import 'package:veryf_app/static/static.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +18,10 @@ class HomePage extends StatefulWidget {
 
   static Route route({required ReportRepository reportRepository}) {
     return MaterialPageRoute(
-        builder: (_) => HomePage(reportRepository: reportRepository));
+        builder: (_) => RepositoryProvider(
+              create: (context) => ReportRepository(),
+              child: HomePage(reportRepository: reportRepository),
+            ));
   }
 
   @override
@@ -25,14 +29,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late int _selectedPage; //? untuk navigasi antar page
-  late PageController _pageController; //? controller untuk page slider
-
-  // final List<ReportCard> _listLaporanHariIni = List.generate(7, (index) {
-  //   return ReportCard(
-  //       image: Image.asset('assets/images/sample.jpg'),
-  //       invoice_number: "#123456");
-  // }); //? Builder LaporanCard base on reports
+  late int _selectedPage;
+  late PageController _pageController;
+  Iterable<Widget> reportListHariIni = {};
+  Iterable<Widget> reportListBulanIni = {};
+  int invoicesCount = 0;
+  int reportsCount = 0;
+  LatLng location = LatLng(0, 0);
 
   void _changePage(int pageNumber) {
     setState(() {
@@ -43,6 +46,18 @@ class _HomePageState extends State<HomePage> {
         curve: Curves.fastLinearToSlowEaseIn,
       );
     });
+  }
+
+  void _updateHome(HomeState state) {
+    if (state.reports.length != reportsCount ||
+        state.invoices.length != invoicesCount ||
+        state.latLng != location) {
+      setState(() {
+        invoicesCount = state.invoices.length;
+        reportsCount = state.reports.length;
+        location = state.latLng;
+      });
+    }
   }
 
   @override
@@ -62,160 +77,147 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => HomeBloc(
+        reportRepository: RepositoryProvider.of<ReportRepository>(context),
         authenticationBloc: RepositoryProvider.of<AuthenticationBloc>(context),
       ),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: const ToolBarWidget(height: 92),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Laporan Driver",
-                  style: h4,
+      child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                titleSpacing: 8.0,
+                title: Text(
+                  'Welcome, ${state.driver.driverName}',
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Row(
-                    children: [
-                      TabButtonWidget(
-                        text: "HARI INI",
-                        selectedPage: 0,
-                        pageNumber: _selectedPage,
-                        // onPressed: () => print("change page 0"),
-                        onPressed: () => _changePage(0),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      TabButtonWidget(
-                        text: "BULAN INI",
-                        selectedPage: 1,
-                        pageNumber: _selectedPage,
-                        // onPressed: () => print("change page 1"),
-                        onPressed: () => _changePage(1),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: BlocBuilder<HomeBloc, HomeState>(
-                    builder: (context, state) {
-                      // Iterable<Widget> reportListHariIni = {};
-                      Iterable<Widget> reportListBulanIni = {};
-                      reportListBulanIni = state.reports.map(
-                        (report) {
-                          // if (report.dateTime.month == DateTime.now().month) {
-                          return ReportCard(
-                            image: Image.asset('assets/images/sample.jpg'),
-                            invoice_number: report.nomor_nota,
-                          );
-                          // }
-                          // return Text("No Report This Month");
-                        },
-                      );
-                      context.read<HomeBloc>().add(RequestReports());
-                      return PageView(
-                        onPageChanged: (int _pageNumber) {
-                          setState(() {
-                            _selectedPage = _pageNumber;
-                          });
-                        },
-                        controller: _pageController,
-                        children: [
-                          GridView.count(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 3 / 4,
-                            children: [
-                              TextButton(
-                                onPressed: () => context
-                                    .read<HomeBloc>()
-                                    .add(RequestReports()),
-                                child: Text("Reload"),
-                              )
-                            ],
+                actions: [
+                  TextButton(
+                    onPressed: () => context
+                        .read<AuthenticationBloc>()
+                        .add(AuthenticationLogoutRequested()),
+                    child: Text(
+                      "Logout",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Total Invoice: $invoicesCount"),
+                    Text("Total Report: $reportsCount"),
+                    // Text(
+                    // "Location: ${location.latitude}, ${location.longitude}"),
+                    Row(
+                      children: [
+                        Text(
+                          "Laporan Driver",
+                          style: h4,
+                        ),
+                        Spacer(),
+                        TextButton(
+                          onPressed: () =>
+                              context.read<HomeBloc>().add(RequestReports()),
+                          child: Text(
+                            "Refresh",
+                            style: TextStyle(color: Colors.blue),
                           ),
-                          GridView.count(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 16,
-                            crossAxisSpacing: 16,
-                            childAspectRatio: 3 / 4,
-                            children: reportListBulanIni.toList(),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      child: Row(
+                        children: [
+                          TabButtonWidget(
+                            text: "HARI INI",
+                            selectedPage: 0,
+                            pageNumber: _selectedPage,
+                            // onPressed: () => print("change page 0"),
+                            onPressed: () => _changePage(0),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TabButtonWidget(
+                            text: "BULAN INI",
+                            selectedPage: 1,
+                            pageNumber: _selectedPage,
+                            // onPressed: () => print("change page 1"),
+                            onPressed: () => _changePage(1),
                           ),
                         ],
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    BlocListener<HomeBloc, HomeState>(
+                      listener: (context, state) {
+                        _updateHome(state);
+                      },
+                      child: Expanded(
+                        child: BlocBuilder<HomeBloc, HomeState>(
+                          builder: (context, state) {
+                            reportListBulanIni = state.reports.map(
+                              (report) {
+                                return ReportCard(
+                                  image: Image.network(report.photo),
+                                  invoice_number: report.nomor_nota,
+                                );
+                              },
+                            );
+                            reportListHariIni = reportListBulanIni;
+                            return PageView(
+                              onPageChanged: (int _pageNumber) {
+                                setState(() {
+                                  _selectedPage = _pageNumber;
+                                });
+                              },
+                              controller: _pageController,
+                              children: [
+                                GridView.count(
+                                  padding: EdgeInsets.only(right: 8.0),
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 8,
+                                  childAspectRatio: 3 / 4,
+                                  children: reportListHariIni.toList(),
+                                ),
+                                GridView.count(
+                                  padding: EdgeInsets.only(right: 8.0),
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 8,
+                                  childAspectRatio: 3 / 4,
+                                  children: reportListBulanIni.toList(),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    ReportBuilder.route(
+                      RepositoryProvider.of<HomeBloc>(context),
+                      RepositoryProvider.of<ReportRepository>(context),
+                      context,
+                    ),
+                  );
+                },
+                child: const Icon(Icons.add),
+                backgroundColor: primaryColor,
+              ),
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed('/camera');
-            },
-            child: const Icon(Icons.add),
-            backgroundColor: primaryColor,
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 }
-
-// reportListHariIni = state.reports!.map(
-//   (report) {
-    // if (report.dateTime.day == DateTime.now().day) {
-//     return ReportCard(
-//       image: Image.asset('assets/images/sample.jpg'),
-//       invoice_number: report.nomor_nota,
-//     );
-    // }
-    // return Text("No Report Today");
-//   },
-// );
-// reportListBulanIni = state.reports!.map(
-//   (report) {
-    // if (report.dateTime.month == DateTime.now().month) {
-//     return ReportCard(
-//       image: Image.asset('assets/images/sample.jpg'),
-//       invoice_number: report.nomor_nota,
-//     );
-    // }
-    // return Text("No Report This Month");
-//   },
-// );
-
-// return PageView(
-//   onPageChanged: (int _pageNumber) {
-//     setState(() {
-//       _selectedPage = _pageNumber;
-//     });
-//   },
-//   controller: _pageController,
-//   children: [
-//     GridView.count(
-//       crossAxisCount: 2,
-//       mainAxisSpacing: 16,
-//       crossAxisSpacing: 16,
-//       childAspectRatio: 3 / 4,
-//       children: [
-//         Text(reportListHariIni.toList().length.toString())
-//       ],
-//     ),
-//     GridView.count(
-//       crossAxisCount: 2,
-//       mainAxisSpacing: 16,
-//       crossAxisSpacing: 16,
-//       childAspectRatio: 3 / 4,
-//       children: [
-//         Text(
-//             reportListBulanIni.toList().length.toString())
-//       ],
-//     ),
-//   ],
-// );

@@ -12,7 +12,7 @@ class Invoice extends Equatable {
   final String time;
   final String location;
 
-  Invoice(
+  const Invoice(
     this.nomor_nota,
     this.amount,
     this.nama_driver,
@@ -23,6 +23,8 @@ class Invoice extends Equatable {
     this.time,
     this.location,
   );
+
+  static const empty = Invoice("-", "-", "-", "-", "-", "-", "-", "-", "-");
 
   static Invoice fromJson(Map<String, dynamic> json) => Invoice(
         json["nomor_nota"],

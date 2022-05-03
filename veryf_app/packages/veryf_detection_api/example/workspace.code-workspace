@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "../../gsheet_service"
+		},
+		{
+			"path": "../../authentication_repository"
+		},
+		{
+			"path": "../../driver_dataprovider"
+		},
+		{
+			"path": "../../report_repository"
+		},
+		{
+			"path": "../../invoice_dataprovider"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../report_builder_repository"
+		}
+	],
+	"settings": {}
+}

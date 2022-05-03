@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:veryf_app/static/static.dart';
+// import 'package:veryf_app/static/static.dart';
 
 class ToolBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final double height;

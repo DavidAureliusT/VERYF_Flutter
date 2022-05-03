@@ -10,3 +10,5 @@ dependencies:
   latlng: ^0.1.0
   invoice_dataprovider:
     path: ../invoice_dataprovider
+  veryf_storage:
+    path: ../veryf_storage

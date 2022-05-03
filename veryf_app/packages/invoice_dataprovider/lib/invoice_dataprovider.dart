@@ -27,6 +27,40 @@ class InvoiceDataProvider extends GSheetService {
     final data = await worksheet.values.map.allRows(fromRow: 2);
     return data == null ? [] : data;
   }
-}
 
-//contructor tabel invoices
+  Future<bool> storeNewReport({
+    required String nomor_nota,
+    required String photo,
+    required String? date,
+    required String? time,
+    required String? location,
+    required String? creator,
+  }) async {
+    final isFotoUpdated = await super.updateCell(
+      id: int.parse(nomor_nota),
+      key: "foto",
+      value: photo,
+    );
+    print("isFotoUpdated: $isFotoUpdated");
+    final isDateUpdated = await super.updateCell(
+      id: int.parse(nomor_nota),
+      key: "date_text",
+      value: date,
+    );
+    print("isDateUpdated: $isDateUpdated");
+    final isTimeUpdated = await super.updateCell(
+      id: int.parse(nomor_nota),
+      key: "time_text",
+      value: time,
+    );
+    print("isTimeUpdated: $isTimeUpdated");
+    final isLocationUpdated = await super.updateCell(
+      id: int.parse(nomor_nota),
+      key: "posisi",
+      value: location,
+    );
+    print("isLocationUpdated: $isLocationUpdated");
+
+    return isFotoUpdated && isDateUpdated && isTimeUpdated && isLocationUpdated;
+  }
+}

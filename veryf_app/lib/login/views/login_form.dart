@@ -20,6 +20,7 @@ class LoginForm extends StatelessWidget {
         alignment: const Alignment(0, -1 / 3),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _EmailInput(),
             const Padding(padding: EdgeInsets.all(12)),
@@ -44,7 +45,7 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) =>
               context.read<LoginBloc>().add(LoginEmailChanged(email)),
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: 'Email Address',
             errorText: state.email.invalid ? 'invalid email' : null,
           ),
         );
@@ -65,7 +66,7 @@ class _PasswordInput extends StatelessWidget {
               context.read<LoginBloc>().add(LoginPasswordChanged(password)),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: 'Password',
             errorText: state.password.invalid ? 'invalid password' : null,
           ),
         );
@@ -84,6 +85,8 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
+                style: ElevatedButton.styleFrom(
+                    primary: Theme.of(context).primaryColor),
                 child: const Text('Login'),
                 onPressed: state.status.isValidated
                     ? () {

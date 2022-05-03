@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:report_repository/report_repository.dart';
 import 'package:veryf_app/authentication/authentication.dart';
 import 'package:veryf_app/home/home.dart';
-// import 'package:veryf_app/home/view/home_view.dart';
 import 'package:veryf_app/login/login.dart';
 import 'package:veryf_app/splash/splash.dart';
 import 'package:authentication_repository/authentication_repository.dart';
@@ -43,6 +43,31 @@ class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        fontFamily: GoogleFonts.zenKakuGothicAntique().fontFamily,
+        textTheme: TextTheme(
+          headline3: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          button: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+          subtitle1: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black45,
+          ),
+          bodyText1: TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        canvasColor: Colors.white,
+      ),
+      debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(

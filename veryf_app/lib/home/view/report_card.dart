@@ -27,19 +27,23 @@ class ReportCard extends StatelessWidget {
           color: whiteColor,
           borderRadius: BorderRadius.circular(5.0),
         ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 7.0,
-          horizontal: 9.0,
-        ),
-        child: Text(
-          invoice_number,
-          style: GoogleFonts.roboto(
-            textStyle: const TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.bold,
-              color: blackColor,
+        // padding: const EdgeInsets.symmetric(
+        //   vertical: 7.0,
+        //   horizontal: 9.0,
+        // ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              invoice_number,
+              style: GoogleFonts.roboto(
+                textStyle: const TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

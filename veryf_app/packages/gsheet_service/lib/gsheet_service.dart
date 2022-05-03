@@ -38,6 +38,15 @@ class GSheetService {
     }
   }
 
+  Future<bool> updateCell({
+    required int id,
+    required String key,
+    required dynamic value,
+  }) async {
+    return worksheet.values
+        .insertValueByKeys(value, columnKey: key, rowKey: id);
+  }
+
   Future init() async {
     print("Start initialize the GSheet Service!");
     try {
